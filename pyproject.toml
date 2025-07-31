@@ -15,3 +15,7 @@ dependencies = [
 [project.scripts]
 passkit = "passkit_cli.cli:cli"
 
+[tool.setuptools.packages.find]
+include = ["passkit_cli*"]
+exclude = ["tests", "images"]
+
