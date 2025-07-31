@@ -1,78 +1,64 @@
-PassKit Python Quickstart
-=======================
+# PassKit CLI en Python
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://badge.fury.io/py/passkit-python-grpc-sdk.svg)](https://pypi.org/project/passkit-python-grpc-sdk/)
 
-### Overview
+## Descripción
 
-This quickstart aims to help  get Python developers up and running with the PassKit SDK as quickly as possible.
+Este proyecto proporciona un cliente de línea de comandos (CLI) que simplifica el uso del SDK gRPC de PassKit desde Python. Con él es posible crear programas de membresía, inscribir miembros y generar cupones directamente desde la terminal.
 
-### Prerequisites
+La aplicación está implementada con la biblioteca [Click](https://click.palletsprojects.com/) y utiliza el paquete [`passkit-python-grpc-sdk`](https://pypi.org/project/passkit-python-grpc-sdk/) para comunicarse de forma segura con los servicios de PassKit.
 
-You will need the following:
+## Requisitos
 
-- A PassKit account (signup for free at https://app.passkit.com)
-- Your PassKit SDK Credentials (available from the https://app.passkit.com/app/account/developer-tools)
-- Python 3.7 or above from https://www.oracle.com/java/technologies/downloads/ (https://docs.oracle.com/en/java/javase/18/install/overview-jdk-installation.html - guide on how to download)
-- Gradle Build Tool from https://gradle.org/install/ with guide on how to install
+- Cuenta en [PassKit](https://app.passkit.com) y credenciales para el SDK (archivos `certificate.pem`, `ca-chain.pem` y `key.pem`).
+- Python 3.7 o superior.
+- Acceso a internet para instalar las dependencias desde PyPI.
 
-### Configuration
+Coloca los archivos de certificado en un directorio `certs` dentro del proyecto o define las variables de entorno `PASSKIT_CA_CHAIN`, `PASSKIT_CERT` y `PASSKIT_KEY` apuntando a sus rutas.
 
-1. Download or clone this quickstart repository, create a folder `certs` in the resources folder of the repository and add the following three PassKit credential files:
-    - certificate.pem
-    - ca-chain.pem
-    - key.pem
-    
-    You can disregard the key-java.pem credentials file as it is not compatible with Python.
-2. Use `pip install passkit-python-grpc-sdk` to download the latest sdk from python.
-    
-###  Membership Cards
-In the membership folder the methods there are:
-- create-program.py - takes a new program name and creates a new program
-- create-tier.py -  takes the programId of the program just created in the above program, creates a new template (based of default template), creates a tier, and links this tier to the program
-- enrol-member.py - takes programId and tierId created by the above methods, and memberDetails, creates a new member record, and sends a welcome email to deliver membership card url
-- update-member.py - takes memberId and memberDetails, and updates existing member record
-- check-in-member.py - takes memberId and location details and checks in the selected member
-- check-out-member.py - takes memberId and location details and checks out the selected member
-- earn-points.py - takes a programId of an existing program and memberId of existing member to add points to chosen member
-- burn-points.py - takes a programId of an existing program and memberId of existing member to use points from a chosen member
-- delete-member.py - takes programId, tierId, memberId and memberDetails, deletes an existing member record
+## Instalación y compilación
 
-###  Coupons
-In the coupons folder the methods are:
-- create-campaign.py - takes a new campaign name and creates a new campaign
-- create-offer.py - takes a campaignId of the campaign you just created and creates a new template (based of default template), creates an offer, and links this offer to the campaign
-- create-coupon.py - takes campaignId and offerId created by the above methods, and couponDetails, creates a new coupon record, and sends a welcome email to deliver coupon card url
-- list-coupons.py - takes campaignId and returns list of coupon records under that campaign
-- update-coupon.py - takes a campaignId of an existing campaign and couponId of existing coupon to update that coupon
-- redeem-coupon.py - takes a campaignId of an existing campaign and couponId of existing coupon to redeem that coupon
-- void-coupon.py - takes the couponId, offerId and campaignId to void an existing coupon
+1. Clona este repositorio y sitúate en la carpeta raíz.
+2. Ejecuta:
+   ```bash
+   pip install -e .
+   ```
+   Esto instalará las dependencias y compilará el paquete en modo editable, dejando disponible el comando `passkit` en tu entorno.
 
+## Uso del CLI
 
-
-## Documentation
-* [PassKit Membership Official Documentation](https://docs.passkit.io/protocols/member)
-* [PassKit Coupons Official Documentation](https://docs.passkit.io/protocols/coupon)
-* [PassKit Events Official Documentation](https://docs.passkit.io/protocols/event-tickets/)
-
-
-## CLI Usage
-
-Install dependencies and the package:
+Configura las variables de entorno con las rutas de tus certificados (si no usas la carpeta `certs` por defecto) e invoca los comandos. Algunos ejemplos:
 
 ```bash
-pip install -e .
+export PASSKIT_CA_CHAIN=/ruta/ca-chain.pem
+export PASSKIT_CERT=/ruta/certificate.pem
+export PASSKIT_KEY=/ruta/key.pem
+
+# Crear un programa de membresía
+passkit membership create-program --name "Mi Programa"
+
+# Inscribir un miembro
+passkit membership enrol-member --program-id PRG_ID --tier-id TIER_ID \
+    --forename Juan --surname Perez --email juan@example.com
+
+# Crear un cupón
+passkit coupons create --campaign-id CAMP_ID --offer-id OFFER_ID \
+    --forename Ana --surname Lopez --email ana@example.com
 ```
 
-Set the required environment variables pointing to your certificate files and run commands:
+Ejecuta `passkit --help` para obtener la lista completa de comandos y opciones disponibles.
 
-```bash
-export PASSKIT_CA_CHAIN=/path/to/ca.pem
-export PASSKIT_CERT=/path/to/certificate.pem
-export PASSKIT_KEY=/path/to/key.pem
+### Comandos principales
 
-passkit membership create-program --name "My Program"
-```
+- **membership create-program**: crea un nuevo programa de membresía.
+- **membership enrol-member**: inscribe un miembro en un programa y devuelve su identificador.
+- **coupons create**: genera un cupón asociado a una campaña y oferta.
 
-Run `passkit --help` to see all available commands.
+Dentro de las carpetas `passkit_cli/membership` y `passkit_cli/coupons` encontrarás otros scripts de ejemplo para operaciones adicionales (crear campañas, crear ofertas, actualizar cupones, etc.).
+
+## Documentación
+
+- [Documentación oficial de Membership](https://docs.passkit.io/protocols/member)
+- [Documentación oficial de Coupons](https://docs.passkit.io/protocols/coupon)
+- [Documentación oficial de Event Tickets](https://docs.passkit.io/protocols/event-tickets/)
