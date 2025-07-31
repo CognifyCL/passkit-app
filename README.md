@@ -16,8 +16,6 @@ You will need the following:
 - Your PassKit SDK Credentials (available from the https://app.passkit.com/app/account/developer-tools)
 - Python 3.7 or above from https://www.oracle.com/java/technologies/downloads/ (https://docs.oracle.com/en/java/javase/18/install/overview-jdk-installation.html - guide on how to download)
 - Gradle Build Tool from https://gradle.org/install/ with guide on how to install
-- Apple wallet certificate id (for flights only, https://app.passkit.com/app/account/certificates)
- ![ScreenShot](images/certificate.png)
 
 ### Configuration
 
@@ -51,24 +49,30 @@ In the coupons folder the methods are:
 - redeem-coupon.py - takes a campaignId of an existing campaign and couponId of existing coupon to redeem that coupon
 - void-coupon.py - takes the couponId, offerId and campaignId to void an existing coupon
 
-### Boarding Passes
-#### Issue A Boarding Pass.
-In the flights folder the methods are:
-- create-template.py - creates the pass template for flights and boarding passes
-- create-carrier.py - takes a new carrier code and creates a new carrier
-- create-airport.py - takes a new airport code and creates a new airport.
-- create-flight.py - takes templateId , from previous method, to use as base template and uses a carrier code, created from previous method, and creates a new flight
-- create-flight-designator.py - creates flight designator using flight code
-- create-boarding-pass.py - takes templateId, from previous method, and customer details creates a new boarding pass, and sends a welcome email to deliver boarding pass url
-- delete-flight.py - takes an existing flight number as well as other details and deletes the flight associated with it
-- delete-flight-designator.py - takes an existing flight designation and deletes the flight designator associated with it
-- delete-airports.py - takes an existing airport code and deletes the airport associated with it
-- delete-carrier.py - takes an existing carrier code and deletes the carrier associated with it
 
 
 ## Documentation
 * [PassKit Membership Official Documentation](https://docs.passkit.io/protocols/member)
 * [PassKit Coupons Official Documentation](https://docs.passkit.io/protocols/coupon)
-* [PassKit Boarding Passes Official Documentation](https://docs.passkit.io/protocols/boarding)
 * [PassKit Events Official Documentation](https://docs.passkit.io/protocols/event-tickets/)
 
+
+## CLI Usage
+
+Install dependencies and the package:
+
+```bash
+pip install -e .
+```
+
+Set the required environment variables pointing to your certificate files and run commands:
+
+```bash
+export PASSKIT_CA_CHAIN=/path/to/ca.pem
+export PASSKIT_CERT=/path/to/certificate.pem
+export PASSKIT_KEY=/path/to/key.pem
+
+passkit membership create-program --name "My Program"
+```
+
+Run `passkit --help` to see all available commands.

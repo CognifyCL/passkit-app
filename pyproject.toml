@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "passkit-cli"
+version = "0.1.0"
+description = "Command line interface for PassKit SDK"
+requires-python = ">=3.7"
+dependencies = [
+    "click",
+    "passkit-python-grpc-sdk"
+]
+
+[project.scripts]
+passkit = "passkit_cli.cli:cli"
+
